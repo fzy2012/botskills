@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Skills Directory
 
-## Getting Started
+这是一个基于 [Next.js](https://nextjs.org/) 构建的现代化 AI 技能展示网站。
 
-First, run the development server:
+本项目预配置了 Shadcn/UI 和 Tailwind CSS，提供科技感的界面设计。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 技术栈
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **框架**: Next.js 15+ (App Router)
+- **样式**: Tailwind CSS v4
+- **组件库**: Shadcn/UI
+- **图标**: Lucide React
+- **数据源**: 本地静态数据
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 项目结构
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `src/data/skills.json`: 技能数据文件。
+- `src/lib/data.ts`: 数据读取逻辑。
+- `src/components/ui`: 基础 UI 组件。
+- `src/components/skills`: 业务组件。
+- `src/app/page.tsx`: 首页。
 
-## Learn More
+## 开始使用
 
-To learn more about Next.js, take a look at the following resources:
+1. 安装依赖：
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. 启动开发服务器：
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. 打开 [http://localhost:3000](http://localhost:3000) 查看。
