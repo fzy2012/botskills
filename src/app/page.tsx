@@ -1,15 +1,138 @@
+import { Suspense } from "react";
 import { getSiteData } from "@/lib/data";
 import { SkillCard } from "@/components/skills/skill-card";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MarkdownContent } from "@/components/markdown-content";
 import { Badge } from "@/components/ui/badge";
 import { Terminal } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default async function Home() {
+function SkillsLoading() {
+  return (
+    <div className="space-y-12">
+      {[1, 2, 3].map((i) => (
+        <section key={i}>
+          <div className="flex items-center gap-2 mb-4">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-5 w-10" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((j) => (
+              <Skeleton key={j} className="h-32 rounded-lg" />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function ContentLoading() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-6 w-3/4" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-2/3" />
+    </div>
+  );
+}
+
+async function SkillsContent() {
+  const data = await getSiteData();
+  
+  return (
+    <div className="space-y-12">
+      {data.categories.length === 0 ? (
+        <div className="text-center py-10 text-muted-foreground">
+          Loading skills or failed to fetch data...
+        </div>
+      ) : (
+        data.categories.map((category) => (
+          <section key={category.name} id={category.name.toLowerCase().replace(/\s+/g, '-')}>
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-2xl font-bold tracking-tight">
+                {category.name}
+              </h2>
+              <Badge variant="secondary" className="text-xs">
+                {category.skills.length}
+              </Badge>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {category.skills.map((skill) => (
+                <SkillCard key={skill.url} skill={skill} />
+              ))}
+            </div>
+          </section>
+        ))
+      )}
+    </div>
+  );
+}
+
+async function InstallationContent() {
+  const data = await getSiteData();
+  
+  return (
+    <div className="rounded-xl border bg-card text-card-foreground shadow max-w-4xl mx-auto">
+      <div className="flex flex-col space-y-1.5 p-6">
+        <h3 className="font-semibold leading-none tracking-tight flex items-center gap-2">
+          <Terminal className="w-5 h-5" />
+          Installation Guide
+        </h3>
+        <p className="text-sm text-muted-foreground">Follow these instructions to set up skills.</p>
+      </div>
+      <div className="p-6 pt-0">
+        <MarkdownContent content={data.installation} />
+      </div>
+    </div>
+  );
+}
+
+async function AboutContent() {
+  const data = await getSiteData();
+  
+  return (
+    <div className="grid gap-6 md:grid-cols-2">
+      <div className="space-y-6">
+        <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+          <MarkdownContent content={data.about} />
+        </div>
+      </div>
+      <div className="space-y-6">
+        <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+          <h3 className="text-lg font-semibold mb-4">Project Info</h3>
+          <MarkdownContent content={data.introduction} className="prose-sm" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+async function HeaderStats() {
   const data = await getSiteData();
   const totalSkills = data.categories.reduce((acc, c) => acc + c.skills.length, 0);
+  
+  return (
+    <Badge variant="outline" className="ml-auto">
+      {totalSkills}+ Skills
+    </Badge>
+  );
+}
 
+async function HeroContent() {
+  const data = await getSiteData();
+  const totalSkills = data.categories.reduce((acc, c) => acc + c.skills.length, 0);
+  
+  return (
+    <p className="text-xl text-muted-foreground">
+      Discover {totalSkills}+ community-built skills for your AI assistant.
+      Extend capabilities, automate workflows, and perform specialized tasks.
+    </p>
+  );
+}
+
+export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -28,11 +151,11 @@ export default async function Home() {
             </nav>
           </div>
           <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-             <div className="w-full flex-1 md:w-auto md:flex-none">
-                <Badge variant="outline" className="ml-auto">
-                  {totalSkills}+ Skills
-                </Badge>
-             </div>
+            <div className="w-full flex-1 md:w-auto md:flex-none">
+              <Suspense fallback={<Skeleton className="h-5 w-20" />}>
+                <HeaderStats />
+              </Suspense>
+            </div>
           </div>
         </div>
       </header>
@@ -44,10 +167,9 @@ export default async function Home() {
             <h1 className="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
               Awesome OpenClaw Skills
             </h1>
-            <p className="text-xl text-muted-foreground">
-              Discover {totalSkills}+ community-built skills for your AI assistant.
-              Extend capabilities, automate workflows, and perform specialized tasks.
-            </p>
+            <Suspense fallback={<Skeleton className="h-7 w-full max-w-xl" />}>
+              <HeroContent />
+            </Suspense>
           </div>
         </div>
 
@@ -59,66 +181,21 @@ export default async function Home() {
           </TabsList>
           
           <TabsContent value="skills" className="space-y-8">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-               {/* Quick Stats or Featured could go here */}
-            </div>
-            
-            <div className="space-y-12">
-              {data.categories.length === 0 ? (
-                <div className="text-center py-10 text-muted-foreground">
-                  Loading skills or failed to fetch data...
-                </div>
-              ) : (
-                data.categories.map((category) => (
-                  <section key={category.name} id={category.name.toLowerCase().replace(/\s+/g, '-')}>
-                    <div className="flex items-center gap-2 mb-4">
-                        <h2 className="text-2xl font-bold tracking-tight">
-                        {category.name}
-                        </h2>
-                        <Badge variant="secondary" className="text-xs">
-                            {category.skills.length}
-                        </Badge>
-                    </div>
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                      {category.skills.map((skill) => (
-                        <SkillCard key={skill.url} skill={skill} />
-                      ))}
-                    </div>
-                  </section>
-                ))
-              )}
-            </div>
+            <Suspense fallback={<SkillsLoading />}>
+              <SkillsContent />
+            </Suspense>
           </TabsContent>
           
           <TabsContent value="installation">
-            <div className="rounded-xl border bg-card text-card-foreground shadow max-w-4xl mx-auto">
-                <div className="flex flex-col space-y-1.5 p-6">
-                    <h3 className="font-semibold leading-none tracking-tight flex items-center gap-2">
-                        <Terminal className="w-5 h-5" />
-                        Installation Guide
-                    </h3>
-                    <p className="text-sm text-muted-foreground">Follow these instructions to set up skills.</p>
-                </div>
-                <div className="p-6 pt-0">
-                    <MarkdownContent content={data.installation} />
-                </div>
-            </div>
+            <Suspense fallback={<ContentLoading />}>
+              <InstallationContent />
+            </Suspense>
           </TabsContent>
           
           <TabsContent value="about">
-             <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-6">
-                    <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                        <MarkdownContent content={data.about} />
-                    </div>
-                </div>
-                <div className="space-y-6">
-                     <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                        <h3 className="text-lg font-semibold mb-4">Project Info</h3>
-                         <MarkdownContent content={data.introduction} className="prose-sm" />
-                    </div>
-                </div>
-             </div>
+            <Suspense fallback={<ContentLoading />}>
+              <AboutContent />
+            </Suspense>
           </TabsContent>
         </Tabs>
 
