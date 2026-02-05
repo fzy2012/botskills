@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface CategoryFilterProps {
@@ -11,42 +10,62 @@ interface CategoryFilterProps {
   counts: Record<string, number>;
 }
 
-export function CategoryFilter({ categories, selected, onSelect, counts }: CategoryFilterProps) {
+export function CategoryFilter({
+  categories,
+  selected,
+  onSelect,
+  counts,
+}: CategoryFilterProps) {
+  const totalCount = Object.values(counts).reduce((a, b) => a + b, 0);
+
   return (
     <ScrollArea className="w-full whitespace-nowrap">
-      <div className="flex gap-2 pb-3">
-        <Button
-          variant={selected === null ? "default" : "outline"}
-          size="sm"
+      <div className="flex gap-2 pb-2">
+        {/* All button */}
+        <button
           onClick={() => onSelect(null)}
           className={cn(
-            "shrink-0 h-8 px-4 rounded-full transition-all",
-            selected === null 
-              ? "bg-primary text-primary-foreground glow-cyan" 
-              : "border-border/50 hover:border-primary/50 hover:text-primary"
+            "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
+            "border",
+            selected === null
+              ? "bg-primary text-background border-primary glow-sm"
+              : "bg-transparent text-muted-foreground border-border/50 hover:border-primary/50 hover:text-foreground"
           )}
         >
-          全部
-          <span className="ml-1.5 text-xs opacity-70">
-            {Object.values(counts).reduce((a, b) => a + b, 0)}
+          <span>全部</span>
+          <span className={cn(
+            "text-xs px-1.5 py-0.5 rounded-full",
+            selected === null 
+              ? "bg-background/20 text-background" 
+              : "bg-muted text-muted-foreground"
+          )}>
+            {totalCount}
           </span>
-        </Button>
+        </button>
+
+        {/* Category buttons */}
         {categories.map((category) => (
-          <Button
+          <button
             key={category}
-            variant={selected === category ? "default" : "outline"}
-            size="sm"
-            onClick={() => onSelect(category)}
+            onClick={() => onSelect(category === selected ? null : category)}
             className={cn(
-              "shrink-0 h-8 px-4 rounded-full transition-all",
-              selected === category 
-                ? "bg-primary text-primary-foreground glow-cyan" 
-                : "border-border/50 hover:border-primary/50 hover:text-primary"
+              "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
+              "border shrink-0",
+              selected === category
+                ? "bg-primary text-background border-primary glow-sm"
+                : "bg-transparent text-muted-foreground border-border/50 hover:border-primary/50 hover:text-foreground"
             )}
           >
-            {category}
-            <span className="ml-1.5 text-xs opacity-70">{counts[category] || 0}</span>
-          </Button>
+            <span className="truncate max-w-[150px]">{category}</span>
+            <span className={cn(
+              "text-xs px-1.5 py-0.5 rounded-full",
+              selected === category 
+                ? "bg-background/20 text-background" 
+                : "bg-muted text-muted-foreground"
+            )}>
+              {counts[category] || 0}
+            </span>
+          </button>
         ))}
       </div>
       <ScrollBar orientation="horizontal" className="h-2" />
