@@ -5,8 +5,18 @@ import { Category } from "@/lib/data";
 import { SkillCard } from "./skill-card";
 import { SearchInput } from "./search-input";
 import { CategoryFilter } from "./category-filter";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Sparkles, Search as SearchIcon } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Sparkles,
+  SearchX,
+  LayoutGrid,
+  List,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SkillsBrowserProps {
@@ -19,14 +29,19 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  // Flatten all skills with category info
-  const allSkills = useMemo(() => {
-    return categories.flatMap((cat) => cat.skills);
-  }, [categories]);
+  // Flatten all skills
+  const allSkills = useMemo(
+    () => categories.flatMap((cat) => cat.skills),
+    [categories]
+  );
 
-  // Category names and counts
-  const categoryNames = useMemo(() => categories.map((c) => c.name), [categories]);
+  // Category data
+  const categoryNames = useMemo(
+    () => categories.map((c) => c.name),
+    [categories]
+  );
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     categories.forEach((cat) => {
@@ -35,20 +50,20 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
     return counts;
   }, [categories]);
 
-  // Filter skills based on search and category
+  // Filter
   const filteredSkills = useMemo(() => {
     let result = allSkills;
 
     if (selectedCategory) {
-      result = result.filter((skill) => skill.category === selectedCategory);
+      result = result.filter((s) => s.category === selectedCategory);
     }
 
     if (search.trim()) {
-      const searchLower = search.toLowerCase().trim();
+      const q = search.toLowerCase().trim();
       result = result.filter(
-        (skill) =>
-          skill.name.toLowerCase().includes(searchLower) ||
-          skill.description.toLowerCase().includes(searchLower)
+        (s) =>
+          s.name.toLowerCase().includes(q) ||
+          s.description.toLowerCase().includes(q)
       );
     }
 
@@ -62,7 +77,6 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
     return filteredSkills.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredSkills, currentPage]);
 
-  // Reset page when filters change
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
     setCurrentPage(1);
@@ -73,28 +87,70 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
     setCurrentPage(1);
   }, []);
 
+  // Generate page numbers to show
+  const pageNumbers = useMemo(() => {
+    const pages: number[] = [];
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    const end = Math.min(totalPages, start + maxVisible - 1);
+    start = Math.max(1, end - maxVisible + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  }, [currentPage, totalPages]);
+
   return (
-    <div className="space-y-8">
-      {/* Search and Filter Bar */}
-      <div className="sticky top-16 z-40 -mx-4 px-4 py-6 glass">
-        <div className="max-w-7xl mx-auto space-y-5">
-          {/* Search Row */}
+    <div className="space-y-6">
+      {/* Sticky toolbar */}
+      <div className="sticky top-16 z-40 -mx-4 px-4 py-5 glass-strong border-b border-border/20">
+        <div className="max-w-7xl mx-auto space-y-4">
+          {/* Top row: search + stats */}
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div className="w-full sm:max-w-md">
               <SearchInput value={search} onChange={handleSearchChange} />
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
-                <Sparkles className="w-4 h-4 text-primary" />
+              {/* View toggle */}
+              <div className="flex items-center gap-0.5 p-0.5 rounded-lg glass">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={cn(
+                    "p-2 rounded-md transition-all duration-200",
+                    viewMode === "grid"
+                      ? "bg-primary/15 text-primary"
+                      : "text-muted-foreground/50 hover:text-muted-foreground"
+                  )}
+                  aria-label="网格视图"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={cn(
+                    "p-2 rounded-md transition-all duration-200",
+                    viewMode === "list"
+                      ? "bg-primary/15 text-primary"
+                      : "text-muted-foreground/50 hover:text-muted-foreground"
+                  )}
+                  aria-label="列表视图"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Count badge */}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
                 <span className="text-sm font-mono">
-                  <span className="text-primary font-semibold">{filteredSkills.length}</span>
-                  <span className="text-muted-foreground ml-1">个技能</span>
+                  <span className="text-primary font-semibold tabular-nums">
+                    {filteredSkills.length}
+                  </span>
+                  <span className="text-muted-foreground/70 ml-1">个技能</span>
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Category Filter */}
+          {/* Category filter row */}
           <CategoryFilter
             categories={categoryNames}
             selected={selectedCategory}
@@ -104,16 +160,18 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
         </div>
       </div>
 
-      {/* Skills Grid */}
+      {/* Content */}
       {paginatedSkills.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
-            <div className="relative w-20 h-20 rounded-2xl glass flex items-center justify-center mb-6">
-              <SearchIcon className="w-8 h-8 text-muted-foreground" />
+        <div className="flex flex-col items-center justify-center py-28 text-center">
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-primary/10 blur-2xl rounded-full" />
+            <div className="relative w-20 h-20 rounded-2xl glass flex items-center justify-center">
+              <SearchX className="w-8 h-8 text-muted-foreground/50" />
             </div>
           </div>
-          <h3 className="text-xl font-semibold mb-2">未找到匹配的技能</h3>
+          <h3 className="text-xl font-semibold mb-2 text-foreground">
+            未找到匹配的技能
+          </h3>
           <p className="text-muted-foreground text-sm max-w-md mb-6">
             尝试调整搜索关键词或选择其他分类来发现更多技能
           </p>
@@ -123,20 +181,28 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
               setSearch("");
               setSelectedCategory(null);
             }}
-            className="border-primary/50 text-primary hover:bg-primary hover:text-background"
+            className="border-primary/30 text-primary hover:bg-primary hover:text-background transition-all duration-300"
           >
             重置筛选条件
           </Button>
         </div>
       ) : (
         <>
-          {/* Grid */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {/* Grid / List */}
+          <div
+            className={cn(
+              viewMode === "grid"
+                ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                : "flex flex-col gap-3"
+            )}
+          >
             {paginatedSkills.map((skill, index) => (
               <div
                 key={`${skill.url}-${index}`}
-                className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both"
-                style={{ animationDelay: `${Math.min(index * 30, 300)}ms` }}
+                style={{
+                  opacity: 0,
+                  animation: `fade-in-up 0.4s cubic-bezier(0.16,1,0.3,1) ${Math.min(index * 25, 250)}ms forwards`,
+                }}
               >
                 <SkillCard skill={skill} index={index} />
               </div>
@@ -145,73 +211,80 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 pt-8">
-              <div className="flex items-center gap-1 p-1 rounded-xl glass">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentPage(1)}
-                  disabled={currentPage === 1}
-                  className={cn(
-                    "h-9 w-9 p-0 rounded-lg",
-                    "disabled:opacity-30"
-                  )}
-                >
-                  <ChevronsLeft className="h-4 w-4" />
-                  <span className="sr-only">第一页</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className={cn(
-                    "h-9 w-9 p-0 rounded-lg",
-                    "disabled:opacity-30"
-                  )}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  <span className="sr-only">上一页</span>
-                </Button>
-                
-                {/* Page indicator */}
-                <div className="flex items-center gap-2 px-4 min-w-[100px] justify-center">
-                  <span className="text-sm font-mono text-primary font-semibold">{currentPage}</span>
-                  <span className="text-muted-foreground/50">/</span>
-                  <span className="text-sm font-mono text-muted-foreground">{totalPages}</span>
-                </div>
+            <ScrollReveal>
+              <div className="flex items-center justify-center gap-1 pt-8">
+                <div className="flex items-center gap-1 p-1 rounded-xl glass">
+                  {/* First / prev */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                    className="h-9 w-9 p-0 rounded-lg disabled:opacity-20"
+                  >
+                    <ChevronsLeft className="h-4 w-4" />
+                    <span className="sr-only">第一页</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentPage((p) => Math.max(1, p - 1))
+                    }
+                    disabled={currentPage === 1}
+                    className="h-9 w-9 p-0 rounded-lg disabled:opacity-20"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="sr-only">上一页</span>
+                  </Button>
 
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                  className={cn(
-                    "h-9 w-9 p-0 rounded-lg",
-                    "disabled:opacity-30"
-                  )}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                  <span className="sr-only">下一页</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={currentPage === totalPages}
-                  className={cn(
-                    "h-9 w-9 p-0 rounded-lg",
-                    "disabled:opacity-30"
-                  )}
-                >
-                  <ChevronsRight className="h-4 w-4" />
-                  <span className="sr-only">最后一页</span>
-                </Button>
+                  {/* Page numbers */}
+                  {pageNumbers.map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={cn(
+                        "h-9 w-9 rounded-lg text-sm font-mono transition-all duration-200",
+                        page === currentPage
+                          ? "bg-primary/15 text-primary font-semibold"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                      )}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  {/* Next / last */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="h-9 w-9 p-0 rounded-lg disabled:opacity-20"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                    <span className="sr-only">下一页</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                    className="h-9 w-9 p-0 rounded-lg disabled:opacity-20"
+                  >
+                    <ChevronsRight className="h-4 w-4" />
+                    <span className="sr-only">最后一页</span>
+                  </Button>
+                </div>
               </div>
-            </div>
+            </ScrollReveal>
           )}
         </>
       )}
+
+
     </div>
   );
 }

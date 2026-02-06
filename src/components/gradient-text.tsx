@@ -5,17 +5,27 @@ import { cn } from "@/lib/utils";
 interface GradientTextProps {
   children: React.ReactNode;
   className?: string;
-  animate?: boolean;
+  colors?: string[];
 }
 
-export function GradientText({ children, className, animate = true }: GradientTextProps) {
+export function GradientText({
+  children,
+  className,
+  colors = ["#00d4ff", "#7c3aed", "#06b6d4", "#00d4ff"],
+}: GradientTextProps) {
+  const gradientString = colors.join(", ");
+
   return (
     <span
       className={cn(
-        "bg-gradient-to-r from-[oklch(0.75_0.18_180)] via-[oklch(0.7_0.2_220)] to-[oklch(0.65_0.2_280)] bg-clip-text text-transparent",
-        animate && "bg-[length:200%_auto] animate-[gradient-shift_3s_ease_infinite]",
+        "bg-clip-text text-transparent",
         className
       )}
+      style={{
+        backgroundImage: `linear-gradient(90deg, ${gradientString})`,
+        backgroundSize: "300% 100%",
+        animation: "gradient-text-flow 4s ease infinite",
+      }}
     >
       {children}
     </span>

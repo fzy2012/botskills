@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OpenClaw Skills - AI 技能扩展库",
-  description: "探索 1700+ 社区构建的 OpenClaw 技能，扩展 AI 助手能力，自动化工作流程",
+  title: "OpenClaw 技能库 - 入行 365",
+  description: "探索 1700+ 社区构建的 OpenClaw AI 技能，扩展 AI 助手能力，自动化工作流程。入行 365 旗下产品。",
 };
 
 export default function RootLayout({
