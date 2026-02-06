@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Category } from "@/lib/data";
+import useSWR from "swr";
+import { Category, Skill } from "@/lib/data";
 import { SkillCard } from "./skill-card";
 import { SearchInput } from "./search-input";
 import { CategoryFilter } from "./category-filter";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ChevronLeft,
   ChevronRight,
@@ -16,23 +18,55 @@ import {
   SearchX,
   LayoutGrid,
   List,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface SkillsBrowserProps {
-  categories: Category[];
-}
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 const ITEMS_PER_PAGE = 24;
 
-export function SkillsBrowser({ categories }: SkillsBrowserProps) {
+function SkillsBrowserSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="sticky top-16 z-40 -mx-4 px-4 py-5 glass-strong border-b border-border/20">
+        <div className="max-w-7xl mx-auto space-y-4">
+          <Skeleton className="h-12 w-full max-w-md rounded-xl" />
+          <div className="flex gap-2 overflow-hidden">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="h-9 w-24 rounded-full shrink-0" />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <Skeleton key={i} className="h-44 rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function SkillsBrowser() {
+  const { data, isLoading } = useSWR<{ categories: Category[] }>(
+    "/api/skills",
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  );
+
+  const categories = data?.categories ?? [];
+
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Flatten all skills
-  const allSkills = useMemo(
+  const allSkills = useMemo<Skill[]>(
     () => categories.flatMap((cat) => cat.skills),
     [categories]
   );
@@ -97,6 +131,10 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
     for (let i = start; i <= end; i++) pages.push(i);
     return pages;
   }, [currentPage, totalPages]);
+
+  if (isLoading) {
+    return <SkillsBrowserSkeleton />;
+  }
 
   return (
     <div className="space-y-6">
@@ -212,7 +250,7 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
           {/* Pagination */}
           {totalPages > 1 && (
             <ScrollReveal>
-              <div className="flex items-center justify-center gap-1 pt-8">
+              <div className="flex items-center justify-center gap-1 pt-8 pb-4">
                 <div className="flex items-center gap-1 p-1 rounded-xl glass">
                   {/* First / prev */}
                   <Button
@@ -283,8 +321,6 @@ export function SkillsBrowser({ categories }: SkillsBrowserProps) {
           )}
         </>
       )}
-
-
     </div>
   );
 }

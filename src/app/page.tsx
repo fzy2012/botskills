@@ -10,28 +10,6 @@ import { AuroraHero } from "@/components/aurora-hero";
 
 /* ---------- Loading skeletons ---------- */
 
-function SkillsLoading() {
-  return (
-    <div className="space-y-8">
-      <div className="sticky top-16 z-40 -mx-4 px-4 py-6 glass-strong">
-        <div className="max-w-7xl mx-auto space-y-5">
-          <Skeleton className="h-12 w-full max-w-md rounded-xl" />
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} className="h-9 w-24 rounded-full" />
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} className="h-44 rounded-xl" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function HeroLoading() {
   return (
     <div className="py-20 md:py-32 space-y-8">
@@ -60,10 +38,7 @@ async function HeroWrapper() {
   return <HeroSection totalSkills={totalSkills} totalCategories={totalCategories} />;
 }
 
-async function SkillsBrowserWrapper() {
-  const data = await getSiteData();
-  return <SkillsBrowser categories={data.categories} />;
-}
+
 
 /* ---------- Page ---------- */
 
@@ -152,11 +127,9 @@ export default function Home() {
           <HeroWrapper />
         </Suspense>
 
-        {/* Skills browser */}
+        {/* Skills browser - fetches its own data via API to avoid large document */}
         <section id="skills" className="pb-20">
-          <Suspense fallback={<SkillsLoading />}>
-            <SkillsBrowserWrapper />
-          </Suspense>
+          <SkillsBrowser />
         </section>
       </main>
 
