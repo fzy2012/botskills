@@ -1,128 +1,223 @@
+import { Suspense } from "react";
 import { getSiteData } from "@/lib/data";
-import { SkillCard } from "@/components/skills/skill-card";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MarkdownContent } from "@/components/markdown-content";
-import { Badge } from "@/components/ui/badge";
-import { Terminal } from "lucide-react";
+import { SkillsBrowser } from "@/components/skills/skills-browser";
+import { HeroSection } from "@/components/hero-section";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Github, BookOpen, Terminal, Menu, ExternalLink } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { AuroraHero } from "@/components/aurora-hero";
 
-export default async function Home() {
+/* ---------- Loading skeletons ---------- */
+
+function HeroLoading() {
+  return (
+    <div className="py-20 md:py-32 space-y-8">
+      <Skeleton className="h-8 w-48 rounded-full" />
+      <div className="space-y-4">
+        <Skeleton className="h-16 w-96 max-w-full" />
+        <Skeleton className="h-16 w-80 max-w-full" />
+      </div>
+      <Skeleton className="h-6 w-full max-w-2xl" />
+      <Skeleton className="h-14 w-96 rounded-xl" />
+      <div className="grid grid-cols-3 gap-4 max-w-2xl">
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-32 rounded-2xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Async data wrappers ---------- */
+
+async function HeroWrapper() {
   const data = await getSiteData();
   const totalSkills = data.categories.reduce((acc, c) => acc + c.skills.length, 0);
+  const totalCategories = data.categories.length;
+  return <HeroSection totalSkills={totalSkills} totalCategories={totalCategories} />;
+}
 
+
+
+/* ---------- Page ---------- */
+
+export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <div className="mr-4 hidden md:flex">
-            <a className="mr-6 flex items-center space-x-2" href="/">
-              <span className="hidden font-bold sm:inline-block">
-                Bot Skills
-              </span>
-            </a>
-            <nav className="flex items-center space-x-6 text-sm font-medium">
-              <a href="#skills" className="transition-colors hover:text-foreground/80 text-foreground/60">Skills</a>
-              <a href="#installation" className="transition-colors hover:text-foreground/80 text-foreground/60">Installation</a>
-              <a href="#about" className="transition-colors hover:text-foreground/80 text-foreground/60">About</a>
+    <div className="min-h-screen bg-background text-foreground noise-overlay">
+      {/* Dot grid background */}
+      <div className="fixed inset-0 dot-grid pointer-events-none opacity-40" />
+
+      {/* ========= Header ========= */}
+      <header className="sticky top-0 z-50 w-full glass-strong border-b border-border/30">
+        <div className="container flex h-16 items-center justify-between">
+          {/* Left: brand */}
+          <div className="flex items-center gap-6">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/25 blur-md rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-background transition-all duration-300">
+                  <Terminal className="h-4 w-4" />
+                </div>
+              </div>
+              <div className="hidden sm:flex flex-col">
+                <span className="font-bold text-base tracking-tight leading-tight">
+                  <span className="text-primary">Open</span>
+                  <span className="text-foreground">Claw</span>
+                  <span className="text-muted-foreground font-normal ml-1.5 text-xs">技能库</span>
+                </span>
+                <span className="text-[10px] text-muted-foreground/60 leading-none">
+                  {"by 入行 365"}
+                </span>
+              </div>
+            </Link>
+
+            {/* Desktop nav */}
+            <nav className="hidden md:flex items-center gap-1">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-primary/5" asChild>
+                <Link href="#skills">浏览技能</Link>
+              </Button>
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-primary/5" asChild>
+                <Link href="https://www.clawhub.com" target="_blank" rel="noopener noreferrer">
+                  文档
+                  <ExternalLink className="ml-1 h-3 w-3" />
+                </Link>
+              </Button>
             </nav>
           </div>
-          <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-             <div className="w-full flex-1 md:w-auto md:flex-none">
-                <Badge variant="outline" className="ml-auto">
-                  {totalSkills}+ Skills
-                </Badge>
-             </div>
+
+          {/* Right: actions */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:flex gap-2 text-muted-foreground hover:text-foreground hover:bg-primary/5"
+              asChild
+            >
+              <Link href="https://github.com/openclaw/skills" target="_blank" rel="noopener noreferrer">
+                <Github className="h-4 w-4" />
+                GitHub
+              </Link>
+            </Button>
+            <Button
+              size="sm"
+              className="hidden sm:flex gap-2 bg-primary text-background hover:bg-primary/90 glow-sm font-medium"
+              asChild
+            >
+              <Link href="https://www.clawhub.com" target="_blank" rel="noopener noreferrer">
+                <BookOpen className="h-4 w-4" />
+                开始使用
+              </Link>
+            </Button>
+            <Button variant="ghost" size="icon" className="md:hidden text-muted-foreground">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">菜单</span>
+            </Button>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container py-6 md:py-10">
-        <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8 mb-8">
-          <div className="flex-1 space-y-4">
-            <h1 className="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
-              Awesome OpenClaw Skills
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Discover {totalSkills}+ community-built skills for your AI assistant.
-              Extend capabilities, automate workflows, and perform specialized tasks.
+      {/* ========= Main content ========= */}
+      <main className="container relative">
+        {/* Aurora hero background */}
+        <AuroraHero />
+
+        {/* Hero */}
+        <Suspense fallback={<HeroLoading />}>
+          <HeroWrapper />
+        </Suspense>
+
+        {/* Skills browser - fetches its own data via API to avoid large document */}
+        <section id="skills" className="pb-20">
+          <SkillsBrowser />
+        </section>
+      </main>
+
+      {/* ========= Footer ========= */}
+      <footer className="relative border-t border-border/30 glass-strong">
+        <div className="container py-12">
+          <div className="grid gap-8 md:grid-cols-3">
+            {/* Brand */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
+                  <Terminal className="h-4 w-4" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-sm">
+                    <span className="text-primary">Open</span>Claw
+                  </span>
+                  <span className="text-[10px] text-muted-foreground/60">入行 365 出品</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                开源的 AI 技能生态系统，由社区驱动，为开发者打造。本站是 rhzl.ruhang365.cn 的组成部分。
+              </p>
+            </div>
+
+            {/* Resources */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-foreground">资源</h4>
+              <ul className="space-y-2.5 text-sm">
+                <li>
+                  <Link href="https://www.clawhub.com" target="_blank" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                    官方文档
+                  </Link>
+                </li>
+                <li>
+                  <Link href="https://github.com/openclaw/skills" target="_blank" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                    GitHub 仓库
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#skills" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                    浏览技能
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Community */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-foreground">社区</h4>
+              <ul className="space-y-2.5 text-sm">
+                <li>
+                  <Link href="https://github.com/openclaw/skills/issues" target="_blank" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                    提交问题
+                  </Link>
+                </li>
+                <li>
+                  <Link href="https://github.com/openclaw/skills/pulls" target="_blank" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                    贡献代码
+                  </Link>
+                </li>
+                <li>
+                  <Link href="https://rhzl.ruhang365.cn" target="_blank" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                    入行 365
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-10 pt-8 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground/60">
+              {"入行 365 \u00B7 rhzl.ruhang365.cn \u00B7 社区驱动的开源项目"}
             </p>
+            <div className="flex items-center gap-4">
+              <Link
+                href="https://github.com/openclaw/skills"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground/50 hover:text-primary transition-colors duration-200"
+              >
+                <Github className="w-4 h-4" />
+                <span className="sr-only">GitHub</span>
+              </Link>
+            </div>
           </div>
         </div>
-
-        <Tabs defaultValue="skills" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="skills">Browse Skills</TabsTrigger>
-            <TabsTrigger value="installation">Installation</TabsTrigger>
-            <TabsTrigger value="about">About</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="skills" className="space-y-8">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-               {/* Quick Stats or Featured could go here */}
-            </div>
-            
-            <div className="space-y-12">
-              {data.categories.length === 0 ? (
-                <div className="text-center py-10 text-muted-foreground">
-                  Loading skills or failed to fetch data...
-                </div>
-              ) : (
-                data.categories.map((category) => (
-                  <section key={category.name} id={category.name.toLowerCase().replace(/\s+/g, '-')}>
-                    <div className="flex items-center gap-2 mb-4">
-                        <h2 className="text-2xl font-bold tracking-tight">
-                        {category.name}
-                        </h2>
-                        <Badge variant="secondary" className="text-xs">
-                            {category.skills.length}
-                        </Badge>
-                    </div>
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                      {category.skills.map((skill) => (
-                        <SkillCard key={skill.url} skill={skill} />
-                      ))}
-                    </div>
-                  </section>
-                ))
-              )}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="installation">
-            <div className="rounded-xl border bg-card text-card-foreground shadow max-w-4xl mx-auto">
-                <div className="flex flex-col space-y-1.5 p-6">
-                    <h3 className="font-semibold leading-none tracking-tight flex items-center gap-2">
-                        <Terminal className="w-5 h-5" />
-                        Installation Guide
-                    </h3>
-                    <p className="text-sm text-muted-foreground">Follow these instructions to set up skills.</p>
-                </div>
-                <div className="p-6 pt-0">
-                    <MarkdownContent content={data.installation} />
-                </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="about">
-             <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-6">
-                    <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                        <MarkdownContent content={data.about} />
-                    </div>
-                </div>
-                <div className="space-y-6">
-                     <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                        <h3 className="text-lg font-semibold mb-4">Project Info</h3>
-                         <MarkdownContent content={data.introduction} className="prose-sm" />
-                    </div>
-                </div>
-             </div>
-          </TabsContent>
-        </Tabs>
-
-      </main>
+      </footer>
     </div>
   );
 }

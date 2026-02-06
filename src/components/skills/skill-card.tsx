@@ -1,45 +1,55 @@
+"use client";
+
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ExternalLink, Zap } from "lucide-react";
 import { Skill } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
 interface SkillCardProps {
   skill: Skill;
+  index?: number;
 }
 
 export function SkillCard({ skill }: SkillCardProps) {
   return (
-    <Card className="h-full transition-all hover:border-primary/50 hover:bg-muted/50">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg font-medium leading-none tracking-tight">
-            <Link 
-              href={skill.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:underline decoration-primary underline-offset-4 flex items-center gap-2"
-            >
+    <Link
+      href={skill.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "group relative block h-full",
+        "rounded-xl overflow-hidden",
+        "glass card-glow gradient-border-hover shimmer-scan",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      )}
+    >
+      {/* Content */}
+      <div className="relative p-5 h-full flex flex-col gap-3">
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary shrink-0 group-hover:bg-primary group-hover:text-background transition-all duration-300 group-hover:shadow-[0_0_12px_rgba(0,212,255,0.3)]">
+              <Zap className="w-3.5 h-3.5" />
+            </div>
+            <h3 className="font-mono text-sm font-semibold text-foreground group-hover:text-primary transition-colors duration-300 truncate">
               {skill.name}
-              <ExternalLink className="h-3 w-3 text-muted-foreground" />
-            </Link>
-          </CardTitle>
-          <Badge variant="secondary" className="text-xs font-normal">
-            {skill.category}
-          </Badge>
+            </h3>
+          </div>
+          <ExternalLink className="w-3.5 h-3.5 text-muted-foreground/30 opacity-0 group-hover:opacity-100 group-hover:text-primary transition-all duration-300 shrink-0 mt-1 transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </div>
-      </CardHeader>
-      <CardContent>
-        <CardDescription className="text-sm text-muted-foreground leading-relaxed">
+
+        {/* Description */}
+        <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-3 flex-1">
           {skill.description}
-        </CardDescription>
-      </CardContent>
-    </Card>
+        </p>
+
+        {/* Category tag */}
+        <div className="pt-2 border-t border-border/20">
+          <span className="inline-flex items-center text-[11px] font-medium text-muted-foreground/50 tracking-wide uppercase">
+            {skill.category}
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }
