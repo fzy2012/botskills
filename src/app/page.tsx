@@ -50,7 +50,7 @@ export default function Home() {
 
       {/* ========= Header ========= */}
       <header className="sticky top-0 z-50 w-full glass-strong border-b border-border/30">
-        <div className="container flex h-16 items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
           {/* Left: brand */}
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-3 group">
@@ -118,7 +118,7 @@ export default function Home() {
       </header>
 
       {/* ========= Main content ========= */}
-      <main className="container relative">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Aurora hero background */}
         <AuroraHero />
 
@@ -135,7 +135,7 @@ export default function Home() {
 
       {/* ========= Footer ========= */}
       <footer className="relative border-t border-border/30 glass-strong">
-        <div className="container py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid gap-8 md:grid-cols-3">
             {/* Brand */}
             <div className="space-y-4">
