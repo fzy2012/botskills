@@ -5,29 +5,56 @@
 ![Next.js](https://img.shields.io/badge/Next.js-15.0-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-**A modern, curated directory of community-built skills for OpenClaw AI assistants.**
+**The Ultimate Directory for OpenClaw AI Skills.**
+
+*Bridging the gap between users and capabilities. Find the right skills, faster.*
 
 [Live Demo](https://botskills.vercel.app) · [Report Bug](https://github.com/fzy2012/botskills/issues) · [Request Feature](https://github.com/fzy2012/botskills/issues)
 
 </div>
 
-## 📖 Introduction
+---
 
-**Bot Skills** is a comprehensive directory and showcase platform for OpenClaw skills. It provides a modern, responsive, and user-friendly interface to explore, search, and filter through thousands of community-contributed skills that extend the capabilities of your AI assistants.
+## 🌟 Our Mission
 
-Built with performance and aesthetics in mind, this project leverages the latest web technologies to deliver a seamless browsing experience.
+**"Information Asymmetry is the Enemy of Efficiency."**
+
+In the rapidly evolving world of AI agents, finding the precise skill to solve a specific problem can be like finding a needle in a haystack. Developers and users often waste valuable time searching for tools that already exist, or rebuilding wheels due to a lack of awareness.
+
+**Bot Skills** was born from a simple yet powerful vision: **To democratize access to AI capabilities.**
+
+We aim to:
+- **Eliminate Information Gaps**: Create a centralized, transparent, and comprehensive repository of skills.
+- **Stop the Detours**: Help users find the *exact* skill they need instantly, without trial and error.
+- **Empower the Community**: Foster a collaborative environment where every contribution helps someone else solve a problem.
+
+Whether you are looking for a complex automation tool or a simple utility, Bot Skills ensures you find the best solution available.
 
 ## ✨ Features
 
-- 🎨 **Modern UI/UX**: Designed with Shadcn/UI and Tailwind CSS for a sleek, professional look.
-- 🌓 **Dark/Light Mode**: Fully supported dark mode with beautiful Aurora background effects.
-- ⚡ **High Performance**: Built on Next.js 15 App Router for blazing fast page loads.
-- 🔍 **Smart Search**: Instant search and filtering capabilities to find the right skills quickly.
-- 📱 **Responsive Design**: Perfectly optimized for desktop, tablet, and mobile devices.
-- 📂 **Categorized View**: Organized skill categories for easy navigation.
-- 📄 **Markdown Support**: Rich text rendering for installation guides and documentation.
+- 🎨 **Modern & Professional Design**: Built with Shadcn/UI and Tailwind CSS for a world-class user experience.
+- 🚀 **Efficiency First**: Instant search, intuitive categorization, and fast loading times.
+- 🤝 **Community Driven**: A platform built by the community, for the community.
+- 🌓 **Dark/Light Mode**: Optimized for all viewing environments with stunning visual effects.
+- 📱 **Fully Responsive**: Access your skills repository from any device, anywhere.
+
+## 🤝 Community & Contribution
+
+**This project belongs to everyone.**
+
+The true value of Bot Skills lies in its community. We believe that collective intelligence outperforms individual effort. By contributing, you aren't just adding code or data; you are helping thousands of developers save time and build better AI agents.
+
+### How You Can Help
+
+- **Add New Skills**: Found a cool OpenClaw skill? Add it to our directory!
+- **Share Use Cases**: Have you used a skill in a unique way? Share your story to inspire others.
+- **Improve the Platform**: Help us make the website faster, prettier, and more useful.
+- **Spread the Word**: Share Bot Skills with your network to help us reach more people.
+
+� **Ready to contribute? Read our [Contribution Guide](CONTRIBUTING.md) to get started.**
 
 ## 🛠️ Tech Stack
 
@@ -36,7 +63,7 @@ Built with performance and aesthetics in mind, this project leverages the latest
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **Components**: [Shadcn/UI](https://ui.shadcn.com/) (Radix UI)
 - **Icons**: [Lucide React](https://lucide.dev/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/) & CSS Animations
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
 
 ## 🚀 Getting Started
 
@@ -56,10 +83,6 @@ Built with performance and aesthetics in mind, this project leverages the latest
 2. **Install dependencies**
    ```bash
    npm install
-   # or
-   pnpm install
-   # or
-   yarn install
    ```
 
 3. **Start the development server**
@@ -70,39 +93,14 @@ Built with performance and aesthetics in mind, this project leverages the latest
 4. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000) to see the application running.
 
-## 📁 Project Structure
-
-```bash
-botskills/
-├── src/
-│   ├── app/              # Next.js App Router pages and layouts
-│   ├── components/       # React components
-│   │   ├── ui/           # Reusable UI components (Shadcn)
-│   │   ├── skills/       # Skill-specific components
-│   │   └── ...
-│   ├── data/             # Static data (skills.json)
-│   ├── lib/              # Utilities and helper functions
-│   └── ...
-├── public/               # Static assets
-└── ...
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
+##  License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
 <div align="center">
-  Built with ❤️ by the community
+  Built with ❤️ by the open source community.
+  <br />
+  Let's build the future of AI agents together.
 </div>
